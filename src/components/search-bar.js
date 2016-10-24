@@ -14,16 +14,22 @@ class SearchBar extends Component {
     }
   }
 
+  onInputChange(term) {
+    this.setState({term});
+    // calling on parent
+    this.props.onSearchTermChange(term);
+  }
+
   // adding a value prop makes it a controlled component
   // value only changes when the state changes
   // calling set state from onchange handler, the state value has not changed
   // set state called, component re-renders
   render() {
     return (
-      <div>
+      <div className="search-bar">
         <input 
           value={this.state.term} 
-          onChange={evt => this.setState({term: evt.target.value})} />
+          onChange={evt => this.onInputChange(evt.target.value)} />
       </div>
     );
   }

@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import SearchBar   from './components/search-bar';
@@ -20,9 +21,12 @@ class App extends Component {
       videos: [],
       selectedVideo: null,
     }
+    this.videoSearch('surfboards');
+  }
 
+  videoSearch(term) {
     // this is a network request
-    YTSearch({key: apiKey, term: 'surfboards'}, (videos) => {
+    YTSearch({key: apiKey, term: term}, (videos) => {
       this.setState({
         videos: videos,
         selectedVideo: videos[0],
@@ -32,9 +36,10 @@ class App extends Component {
 
   // component renders regardless of YTSearch returning or not
   render() {
+    const videoSearch = _.debounce((term) => {this.videoSearch(term)}, 300)
     return (
       <div>
-        <SearchBar />
+        <SearchBar onSearchTermChange={videoSearch}/>
         <VideoDetail video={this.state.selectedVideo}/>
         <VideoList 
           onVideoSelect={(selectedVideo) => {
