@@ -1,16 +1,49 @@
-import React from 'react';
+import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import SearchBar   from './components/search-bar';
-// make a new component that makes html
+import YTSearch from 'youtube-api-search';
+import VideoList from './components/video-list';
+import VideoDetail from './components/video-detail';
+
 const apiKey = 'AIzaSyD9M488fS-stUtKGYpOLExOfnqMfIxlR8A';
 
+// make a new component that makes html
 // take this generated html and put it on the page
-const App = () => {
-  return (
-    <div>
-      <SearchBar />
-    </div>
-  );
+
+// moving from functional to clas based component to keep track of state
+// we do this to persist state through the component's lifecycle
+
+class App extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      videos: [],
+      selectedVideo: null,
+    }
+
+    // this is a network request
+    YTSearch({key: apiKey, term: 'surfboards'}, (videos) => {
+      this.setState({
+        videos: videos,
+        selectedVideo: videos[0],
+      });
+    });
+  }
+
+  // component renders regardless of YTSearch returning or not
+  render() {
+    return (
+      <div>
+        <SearchBar />
+        <VideoDetail video={this.state.selectedVideo}/>
+        <VideoList 
+          onVideoSelect={(selectedVideo) => {
+            this.setState({selectedVideo});
+          }}
+          videos={this.state.videos}/>
+      </div>
+    );
+  }
 }
 
 /*
